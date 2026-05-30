@@ -1,0 +1,6 @@
+# Dev/test dependencies — install after requirements.txt in a venv:
+#   pip install -r requirements.txt -r requirements-dev.txt
+pytest>=8.3.0
+pytest-asyncio>=0.24.0
+pytest-cov>=5.0.0
+anyio>=4.6.0

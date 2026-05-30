@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Secrets — env files (never commit real keys/passwords)
+.env
+**/.env
+.env.*
+!.env.example
+!.env*.example
+.env.local
+**/.env.local
+.env.local.*
+!.env.local.example
+
+# Secrets — keys, wallets, credentials
+*.key
+*.pem
+*.p12
+*.pfx
+keystore*
+credentials.json
+**/credentials.json
+secrets.json
+**/secrets.json
+injectivewalletinfo.json
+**/injectivewalletinfo.json
+*.wallet.json
+.injective-agent/
+
+# Local runtime data (may contain wallet/trade metadata)
+*.log
+sentinel.db
+**/sentinel.db
+*.sqlite
+*.sqlite3
+
+# Node
+node_modules/
+.next/
+
+# Docker overrides (often contain local secrets)
+docker-compose.override.yml
+**/docker-compose.override.yml
+
+# IDE
+.idea/
+.vscode/
+*.swp

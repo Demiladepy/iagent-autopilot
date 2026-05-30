@@ -1,0 +1,46 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="iAgent Autopilot">
+  <defs>
+    <linearGradient id="apEmerald" x1="48" y1="48" x2="208" y2="208" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3DF7C8"/>
+      <stop offset="0.5" stop-color="#10B981"/>
+      <stop offset="1" stop-color="#0A6E59"/>
+    </linearGradient>
+    <linearGradient id="apEmerald2" x1="60" y1="196" x2="196" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2FE0B4"/>
+      <stop offset="1" stop-color="#0C8A6F"/>
+    </linearGradient>
+    <linearGradient id="apEdge" x1="128" y1="24" x2="128" y2="232" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#9BFFEB"/>
+      <stop offset="1" stop-color="#0E9C7E"/>
+    </linearGradient>
+    <radialGradient id="apCore" cx="0.5" cy="0.42" r="0.6">
+      <stop stop-color="#123A31"/>
+      <stop offset="0.6" stop-color="#0A0A0A"/>
+      <stop offset="1" stop-color="#0A0A0A"/>
+    </radialGradient>
+  </defs>
+
+  <rect x="0" y="0" width="256" height="256" rx="56" fill="#0A0A0A"/>
+  <rect x="0.5" y="0.5" width="255" height="255" rx="55.5" fill="none" stroke="#1C2B27" stroke-width="1"/>
+
+  <g transform="translate(128 128)">
+    <g fill="url(#apEmerald2)" stroke="url(#apEdge)" stroke-width="1.5" stroke-linejoin="round" transform="rotate(45)">
+      <path d="M0 -82 L17 -34 Q3 -24 0 -23 Q-3 -24 -17 -34 Z"/>
+      <path d="M82 0 L34 17 Q24 3 23 0 Q24 -3 34 -17 Z"/>
+      <path d="M0 82 L-17 34 Q-3 24 0 23 Q3 24 17 34 Z"/>
+      <path d="M-82 0 L-34 -17 Q-24 -3 -23 0 Q-24 3 -34 17 Z"/>
+    </g>
+    <g fill="url(#apEmerald)" stroke="url(#apEdge)" stroke-width="1.5" stroke-linejoin="round">
+      <path d="M0 -98 L18 -36 Q3 -25 0 -24 Q-3 -25 -18 -36 Z"/>
+      <path d="M98 0 L36 18 Q25 3 24 0 Q25 -3 36 -18 Z"/>
+      <path d="M0 98 L-18 36 Q-3 25 0 24 Q3 25 18 36 Z"/>
+      <path d="M-98 0 L-36 -18 Q-25 -3 -24 0 Q-25 3 -36 18 Z"/>
+    </g>
+
+    <circle cx="0" cy="0" r="31" fill="url(#apCore)" stroke="url(#apEdge)" stroke-width="2.5"/>
+    <circle cx="0" cy="0" r="11.5" fill="none" stroke="url(#apEmerald)" stroke-width="3.5"/>
+    <circle cx="0" cy="0" r="2.8" fill="#3DF7C8"/>
+  </g>
+
+  <circle cx="128" cy="128" r="50" fill="none" stroke="#10B981" stroke-opacity="0.22" stroke-width="1.5" stroke-dasharray="2 8"/>
+</svg>

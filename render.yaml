@@ -1,0 +1,32 @@
+# Render Blueprint — iAgent Autopilot runtime (FastAPI)
+# Dashboard deploys separately on Vercel (see README).
+services:
+  - type: web
+    name: iagent-autopilot-api
+    runtime: python
+    rootDir: runtime
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn sentinel.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.11"
+      - key: SENTINEL_ENV
+        value: production
+      - key: SIMULATOR_MODE
+        value: "true"
+      - key: DRY_RUN
+        value: "true"
+      - key: REQUIRE_API_KEY
+        value: "true"
+      - key: SENTINEL_API_KEY
+        generateValue: true
+      - key: SENTINEL_DB_PATH
+        value: /tmp/sentinel.db
+      - key: CORS_ORIGINS
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
