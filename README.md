@@ -22,7 +22,7 @@
     <img src="docs/assets/dashboard-overview.png" alt="iAgent Autopilot workbench — agent fleet, strategy editor, demo controls, decision pipeline" width="720" />
   </a>
   <br />
-  <em>Operator workbench: set strategy in plain English, run demo scenarios, watch the five-agent pipeline live.</em>
+  <em>Before: operator workbench — strategy set, demo ready, pipeline waiting.</em>
 </p>
 
 ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
@@ -89,7 +89,15 @@ For a deliberate live testnet proof, enable `DEMO_REAL_TX=true`: the Executor su
 | **Kill switch** | One click halts execution; Watcher and Risk keep running |
 | **DRY_RUN by default** | Write tools log intent without broadcasting until you opt in |
 
-**Self-disclosure, not silent failure.** The Auditor receives the full Risk verdict (including internal reason codes) and explains every decision in plain English — including when the system itself misbehaved. In testing, when the Groq risk sanity check timed out and defaulted to approval, the Auditor's summary explicitly disclosed that the Risk model did not finish in time and the trade proceeded on the fallback path. That honesty is a production-maturity feature: you see the failure mode, not a polished lie.
+**Self-disclosure, not silent failure.** The Auditor receives the full Risk verdict (including internal reason codes) and explains every decision in plain English — including when the system itself misbehaved. In the recorded demo below, the Auditor discloses that the Groq risk model timed out and defaulted to approval, flags `low confidence` / `strategy drift`, and still surfaces the on-chain tx hash — you see the failure mode, not a polished lie.
+
+<p align="center">
+  <a href="https://iagent-autopilot.vercel.app">
+    <img src="docs/assets/dashboard-decision-card.png" alt="Decision pipeline after Real On-Chain Demo — Auditor summary, Groq timeout disclosure, audit flags, tx hash" width="720" />
+  </a>
+  <br />
+  <em>After: full pipeline — event → proposal → risk → on-chain execution → Auditor audit with flags.</em>
+</p>
 
 ---
 
@@ -250,5 +258,5 @@ Tagging: [@injective](https://x.com/injective) · [@NinjaLabsHQ](https://x.com/N
 - [x] **Live dashboard** — [iagent-autopilot.vercel.app](https://iagent-autopilot.vercel.app)
 - [x] **Live API** — [iagent-autopilot.onrender.com](https://iagent-autopilot.onrender.com)
 - [x] **GitHub repo** — [github.com/demiladepy/iagent-autopilot](https://github.com/demiladepy/iagent-autopilot)
-- [x] **Screenshot** — `docs/assets/dashboard-overview.png`
-- [ ] **Render env** — set `CORS_ORIGINS=https://iagent-autopilot.vercel.app` when `SENTINEL_API_KEY` is enabled (see DEPLOY.md)
+- [x] **Screenshots** — `docs/assets/dashboard-overview.png` (before) · `docs/assets/dashboard-decision-card.png` (after)
+- [x] **Render CORS** — `CORS_ORIGINS=https://iagent-autopilot.vercel.app` (if using API key auth)
