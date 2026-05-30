@@ -1,6 +1,27 @@
-# iAgent Autopilot
+<p align="center">
+  <img src="dashboard/public/logo.svg" alt="iAgent Autopilot" width="72" height="72" />
+</p>
 
-> Autonomous multi-agent trading on Injective, with receipts.
+<h1 align="center">iAgent Autopilot</h1>
+
+<p align="center">
+  <strong>Every other Injective AI agent explains the chain or suggests a trade — Autopilot is the one that acts on-chain, within hard limits you set, and proves every decision.</strong><br />
+  <em>It trades. You stay in control.</em>
+</p>
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=YOUR_VIDEO_ID"><strong>▶ Watch the 90-second demo</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://YOUR_DASHBOARD.vercel.app">Live dashboard</a>
+  &nbsp;·&nbsp;
+  <a href="https://YOUR_API.onrender.com/health">Live API</a>
+</p>
+
+<p align="center">
+  <img src="docs/assets/dashboard-decision-card.png" alt="Decision card — event → proposal → risk verdict → execution → audit" width="720" />
+  <br />
+  <em>One decision, fully explained: market event → Analyst proposal → Risk verdict → on-chain execution → Auditor summary.</em>
+</p>
 
 ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
 ![Next.js 14](https://img.shields.io/badge/Next.js-14-black)
@@ -8,56 +29,128 @@
 ![Injective Testnet](https://img.shields.io/badge/network-Injective%20Testnet-10B981)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-**[▶ Watch the 90-second demo](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)** · *[Replace with your YouTube link before submission]*
-
-<p align="center">
-  <a href="https://www.youtube.com/watch?v=YOUR_VIDEO_ID">
-    <img src="docs/assets/dashboard-decision-card.png" alt="iAgent Autopilot — annotated decision card showing event → proposal → risk → execution → audit" width="720" />
-  </a>
-  <br />
-  <em>One decision, fully explained: market event → Analyst proposal → Risk verdict → on-chain execution → Auditor summary.</em>
-</p>
-
-## What this is
-
-The [Injective MCP Server](https://github.com/InjectiveLabs/mcp-server) lets any AI agent trade perpetual futures via natural language. **iAgent Autopilot** is the production layer on top: a five-agent autonomous trading system with hard risk limits, persistent memory, and a full audit trail for every decision.
-
 Built for the **Injective Solo AI Builder Sprint** (May 2026).
 
-**Project status:** see [PROJECT_AUDIT.md](PROJECT_AUDIT.md) for a full audit of what’s done, config gaps, and submission checklist.
+---
+
+## What it is
+
+You describe your trading strategy in plain English. Five specialized agents run a governed pipeline — detect events, propose trades, enforce limits, execute on-chain, and audit every outcome. You interact through a dashboard: set strategy, watch the live decision timeline, flip the kill switch, and inspect explorer links for any real transaction.
+
+---
 
 ## Why this matters
 
-Today, an Injective AI agent is one Claude instance with MCP tools. That is powerful — but unsafe for autonomous use:
+Most Injective AI submissions **read** the chain — explainers, monitors, copilots — or, at most, **suggest** actions. None of that moves capital. The gap the field leaves open:
 
-- **No memory** between sessions
-- **No coordination** between specialized concerns (analysis, risk, execution)
-- **No deterministic guardrails** — one bad prompt and your account is empty
-- **No transparency** — you cannot replay why a trade happened
+- **Explain ≠ execute** — knowing what to do and doing it safely are different problems
+- **Single-model agents have no separation of concerns** — analysis and execution share one brain
+- **No deterministic guardrails** — one bad prompt can drain an account
+- **No audit trail** — you cannot replay why a trade happened
 
-Autopilot fixes all four. It is the layer that turns the MCP Server from *“Claude can trade”* into **“a swarm of agents trades within rules you set, and shows you every decision.”**
+Autopilot closes the loop: **act, within rules, with receipts.**
+
+---
 
 ## How AI is used
 
 | Agent | Model | Role |
 |---|---|---|
-| **Watcher** | Groq Llama 3.3 70B | High-frequency market polling, event detection, human-readable event descriptions |
-| **Analyst** | Claude Sonnet 4.5 | Deep reasoning over events + strategy + history → structured trade proposals |
-| **Risk** | Groq Llama 3.3 70B | Separate-brain sanity check on Analyst proposals, layered on **deterministic** limit enforcement |
-| **Executor** | *(no LLM)* | Calls Injective MCP Server tools only after Risk approval |
+| **Watcher** | Groq Llama 3.3 70B | Polls markets via MCP, detects events, writes human-readable descriptions |
+| **Analyst** | Claude Sonnet 4.5 | Reasons over events + strategy + history → structured trade proposals |
+| **Risk** | Groq Llama 3.3 70B | Separate-brain sanity check on proposals, layered on **deterministic** limit enforcement |
+| **Executor** | *(no LLM)* | Calls Injective MCP write tools only after Risk approval |
 | **Auditor** | Claude Sonnet 4.5 | Plain-English explanation of every decision after the fact |
 
-**Anthropic for reasoning, Groq for latency.** Each agent has one narrow job — that is how the system stays safe.
+**Anthropic for reasoning, Groq for latency.** Risk runs on a different model than the Analyst — a deliberate two-brain design so the creative proposer never grades its own homework.
 
-Strategy limits can also be parsed from natural language via **Claude Haiku 4.5** in the dashboard (`POST /strategy/parse`), so operators never have to hand-edit JSON.
+Strategy limits can also be parsed from natural language via **Claude Haiku 4.5** in the dashboard (`POST /strategy/parse`).
+
+---
 
 ## How Injective is integrated
 
-Autopilot sits on top of the official **[Injective MCP Server](https://github.com/InjectiveLabs/mcp-server)**. Every chain interaction — opening positions, closing, adjusting, bridging, checking balances — flows through MCP tool calls over stdio JSON-RPC. There is no parallel chain SDK in this repo; we inherit everything the MCP Server supports out of the box.
+Autopilot is built on the official **[Injective MCP Server](https://github.com/InjectiveLabs/mcp-server)**. Every chain interaction — balances, positions, opens, closes, and demo proof transfers — flows through MCP tool calls over stdio JSON-RPC. There is no parallel chain SDK in this repo.
 
-The **Executor** is the only component allowed to call write tools (`trade_open`, `trade_close`, `adjust`, etc.). That restriction is architectural: other agents never receive an MCP client. Read-only snapshots (`account_positions`, `account_balances`, `market_list`) are used by the Watcher and API layer.
+The **Executor** is the only component with write access (`trade_open`, `trade_close`, `transfer_send`, etc.). Other agents never receive an MCP client — architectural safety by default.
 
-Testnet by default (`INJECTIVE_NETWORK=testnet`). Transaction links in the dashboard resolve to the correct [Injective explorer](https://testnet.explorer.injective.network/) for your network.
+For a deliberate live testnet proof, enable `DEMO_REAL_TX=true`: the Executor substitutes a bank **`transfer_send`** (USDT) for a perp open, producing an explorer-verifiable tx — e.g. `https://testnet.explorer.injective.network/transaction/{txHash}`.
+
+---
+
+## Trust & safety
+
+| Layer | What it does |
+|---|---|
+| **Hard limits** | Max notional, leverage, daily loss, allowed markets — enforced deterministically before any LLM sees the proposal |
+| **Separate-model risk gate** | Groq Risk vetoes reckless proposals even when they pass numeric limits |
+| **Kill switch** | One click halts execution; Watcher and Risk keep running |
+| **DRY_RUN by default** | Write tools log intent without broadcasting until you opt in |
+
+**Self-disclosure, not silent failure.** The Auditor receives the full Risk verdict (including internal reason codes) and explains every decision in plain English — including when the system itself misbehaved. In testing, when the Groq risk sanity check timed out and defaulted to approval, the Auditor's summary explicitly disclosed that the Risk model did not finish in time and the trade proceeded on the fallback path. That honesty is a production-maturity feature: you see the failure mode, not a polished lie.
+
+---
+
+## See it work
+
+| Step | What happens | What to look for |
+|---|---|---|
+| 1 | Set strategy in English → **Parse** → **Save** | Structured limits appear instantly |
+| 2 | **Run scenario: Funding Reversion** | Full pipeline fires: event → proposal → verdict → execution → audit |
+| 3 | **Run scenario: Risk Block** | Analyst proposes an oversized trade → **Risk REJECTS** → Executor never fires |
+| 4 | Toggle **Kill switch** | New executions halt; monitoring continues |
+| 5 | **Run: Real On-Chain Demo** *(local, opt-in)* | `transfer_send` on testnet → ON-CHAIN badge + [explorer link](https://testnet.explorer.injective.network/) |
+
+The pairing that proves the thesis: **Risk rejects bad judgment** *and* **Executor delivers real on-chain execution** when approved.
+
+**[▶ 90-second walkthrough (YouTube)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)**
+
+<p align="center">
+  <img src="docs/assets/dashboard-overview.png" alt="Dashboard — agent fleet, decision timeline, kill switch, demo controls" width="720" />
+</p>
+
+---
+
+## Quickstart (local)
+
+### Prerequisites
+
+- Python 3.11+ · Node 18+
+- [Anthropic](https://console.anthropic.com/) and [Groq](https://console.groq.com/) API keys
+- *(Optional)* [Injective MCP Server](https://github.com/InjectiveLabs/mcp-server) — only for live testnet trading; simulator demo works without it
+
+### Run
+
+```bash
+git clone https://github.com/YOUR_ORG/iagent-sentinel.git
+cd iagent-sentinel
+
+# API
+cd runtime
+cp .env.example .env
+# Add ANTHROPIC_API_KEY, GROQ_API_KEY. Leave SIMULATOR_MODE=true, DRY_RUN=true for local dev.
+pip install -r requirements.txt
+uvicorn sentinel.main:app --reload --port 8000
+
+# Dashboard (new terminal)
+cd dashboard
+cp .env.local.example .env.local
+# RUNTIME_API_URL=http://127.0.0.1:8000
+npm install && npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) · API docs [http://localhost:8000/docs](http://localhost:8000/docs)
+
+### Live demo (public deploy)
+
+| Service | URL | Notes |
+|---|---|---|
+| Dashboard | `https://YOUR_DASHBOARD.vercel.app` | Operator UI |
+| API | `https://YOUR_API.onrender.com` | FastAPI + agents + WebSocket |
+
+The public deploy runs **`SIMULATOR_MODE=true`** and **`DRY_RUN=true`** for judge safety — full agent pipeline, no live capital at risk. See **[DEPLOY.md](DEPLOY.md)** for Render + Vercel env vars (`CORS_ORIGINS`, `SENTINEL_API_KEY`, etc.).
+
+---
 
 ## Architecture
 
@@ -82,7 +175,7 @@ Testnet by default (`INJECTIVE_NETWORK=testnet`). Transaction links in the dashb
             │ sim_inject                                             ▼ approved
      ┌──────────────┐                                         ┌──────────────┐
      │  Simulator   │                                         │   Executor   │──► Injective MCP
-     │  (demo)      │                                         │  (no LLM)    │    trade_open / close
+     │  (demo)      │                                         │  (no LLM)    │    write tools
      └──────────────┘                                         └──────┬───────┘
                                                                      │ execution
                                                                      ▼
@@ -95,88 +188,37 @@ Testnet by default (`INJECTIVE_NETWORK=testnet`). Transaction links in the dashb
 
 **Pipeline:** `event` → `proposal` → `verdict` → `execution` → `audit` — each step persisted and streamed live to the dashboard.
 
-## Quickstart (local — no Docker)
+---
 
-### Prerequisites
+## Potential for future contributions
 
-- Python 3.11+
-- Node 18+
-- [Anthropic](https://console.anthropic.com/) and [Groq](https://console.groq.com/) API keys
-- *(Optional)* [Injective MCP Server](https://github.com/InjectiveLabs/mcp-server) — only for live testnet trading, not required for the simulator demo
+Autopilot is **infrastructure**, not a single-purpose app. It is the governed execution layer for the Injective MCP server — the missing safety and audit shell around any agent that can call chain tools.
 
-### Run locally
+The same five-agent pipeline extends to all **28 MCP tools** today (staking, bridging, limit orders, transfers, cross-chain flows) without rewriting the runtime. Other builders can fork the agent bus + store + dashboard instead of rolling their own coordination, risk gates, and audit trail.
 
-```bash
-git clone https://github.com/YOUR_ORG/iagent-sentinel.git
-cd iagent-sentinel
+| Direction | What it unlocks |
+|---|---|
+| **Tool registry** | Register new MCP tools as agent capabilities with per-tool risk policies |
+| **Strategy marketplace** | Publish/import strategy JSON; community strategies run through the same pipeline |
+| **Backtesting** | Replay historical events through Watcher → Analyst → Risk without execution |
+| **Multi-account** | N strategies × N wallets with isolated limits and shared audit stream |
+| **Custom agents** | Drop-in Python modules under `runtime/sentinel/agents/` auto-registered on startup |
 
-# API
-cd runtime
-cp .env.example .env
-# Add ANTHROPIC_API_KEY, GROQ_API_KEY. Leave SIMULATOR_MODE=true, REQUIRE_API_KEY=false for local dev.
-pip install -r requirements.txt
-uvicorn sentinel.main:app --reload --port 8000
+Contributions welcome: risk policies, new demo scenarios, MCP tool adapters, dashboard UX. See [PROJECT_AUDIT.md](PROJECT_AUDIT.md) for current status and gaps.
 
-# Dashboard (new terminal)
-cd dashboard
-cp .env.local.example .env.local
-# RUNTIME_API_URL=http://127.0.0.1:8000
-npm install && npm run dev
-```
+---
 
-1. Open [http://localhost:3000](http://localhost:3000) · API docs [http://localhost:8000/docs](http://localhost:8000/docs)
-2. Set your strategy in plain English → **Parse** → **Save**
-3. Click **Run scenario: Funding Reversion** and watch all five agents on the decision timeline
+## Tech stack
 
-### Deploy (hackathon): Render + Vercel
+| Layer | Stack |
+|---|---|
+| Runtime | Python 3.11+, FastAPI, asyncio EventBus, SQLite |
+| Agents | Anthropic Claude (Analyst, Auditor, strategy parse) · Groq Llama 3.3 70B (Watcher, Risk) |
+| Chain | [Injective MCP Server](https://github.com/InjectiveLabs/mcp-server) via stdio JSON-RPC |
+| Dashboard | Next.js 14, Tailwind, WebSocket live stream |
+| Deploy | Render (API) · Vercel (dashboard) · optional Docker locally |
 
-**You do not need Docker.** Host the FastAPI runtime on [Render](https://render.com) and the Next.js dashboard on [Vercel](https://vercel.com).
-
-See **[DEPLOY.md](DEPLOY.md)** for step-by-step env vars (`RUNTIME_API_URL`, `SENTINEL_API_KEY`, `CORS_ORIGINS`, etc.).
-
-| Service | Hosts | Root folder |
-|---------|--------|-------------|
-| API + agents + WebSocket | Render | `runtime/` |
-| Dashboard | Vercel | `dashboard/` |
-
-Use `SIMULATOR_MODE=true` and `DRY_RUN=true` on Render for the judge demo (no Node MCP process required). Live Injective MCP fits better on a VPS; the hackathon path is simulator + LLM pipeline.
-
-### Security
-
-When `SENTINEL_API_KEY` is set (recommended on Render/Vercel), protected routes need `X-Sentinel-API-Key`. The Vercel proxy and `/api/ws-url` add the key server-side — it is not baked into the client JS bundle.
-
-Public probes only: `GET /health`, `GET /ready`.
-
-<details>
-<summary>Optional: Docker on your laptop</summary>
-
-```bash
-docker compose up --build
-```
-
-Convenience only — not used for Render/Vercel deployment.
-
-</details>
-
-## What you'll see in the demo
-
-<p align="center">
-  <img src="docs/assets/dashboard-overview.png" alt="Dashboard overview — agent fleet, decision timeline, kill switch, and demo controls" width="720" />
-</p>
-
-| # | What to look at |
-|---|-----------------|
-| 1 | **Agent fleet** — five cards with live status dots and last action (updates over WebSocket) |
-| 2 | **Decision card** — full pipeline: market event → Analyst proposal (confidence bar) → Risk approve/reject → Executor tx link → Auditor summary + flags |
-| 3 | **Kill switch** — one click halts execution; Watcher and Risk keep running |
-| 4 | **Strategy editor** — NL text → structured limits (notional, leverage, daily loss, markets) |
-| 5 | **Demo controls** — Funding Reversion, Risk Block, Kill Switch scenarios without waiting for live market moves |
-
-**[▶ 90-second walkthrough (YouTube)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)**
-
-<!-- Optional embed once the video is live:
-[![Demo](https://img.youtube.com/vi/YOUR_VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)
--->
+---
 
 ## Project layout
 
@@ -188,20 +230,28 @@ Convenience only — not used for Render/Vercel deployment.
 | `DEPLOY.md` | Render + Vercel deployment guide |
 | `docker-compose.yml` | Optional local Docker only |
 
-## Roadmap (potential for future contributions)
-
-- **Strategy marketplace** — publish your strategy as an importable JSON file
-- **Backtesting** — replay historical events through the agent pipeline
-- **Multi-account orchestration** — run Autopilot against N accounts with N strategies
-- **Custom agents** — drop-in Python files in `/agents/custom/` get auto-registered
-- **Mainnet hardening** — additional guardrails for live trading
+---
 
 ## License
 
 MIT. See [LICENSE](LICENSE) if present, or MIT terms apply to this repository.
 
+---
+
 ## Built by
 
-**[@YOUR_HANDLE](https://github.com/YOUR_HANDLE)** — for the Injective Solo AI Builder Sprint, May 2026.
+**[@YOUR_HANDLE](https://github.com/YOUR_HANDLE)** — Injective Solo AI Builder Sprint, May 2026.
 
 Tagging: [@injective](https://x.com/injective) · [@NinjaLabsHQ](https://x.com/NinjaLabsHQ) · [@NinjaLabsCN](https://x.com/NinjaLabsCN)
+
+---
+
+## Submission checklist — fill before you submit
+
+- [ ] **Demo video** — replace `YOUR_VIDEO_ID` in YouTube links (≤ 90s)
+- [ ] **Live dashboard URL** — replace `YOUR_DASHBOARD.vercel.app`
+- [ ] **Live API URL** — replace `YOUR_API.onrender.com`
+- [ ] **GitHub org/repo** — replace `YOUR_ORG/iagent-sentinel` in clone command
+- [ ] **GitHub handle** — replace `YOUR_HANDLE` in Built by section
+- [ ] **Screenshots** — add `docs/assets/dashboard-decision-card.png` and `docs/assets/dashboard-overview.png` (referenced above)
+- [ ] **Render env** — set `CORS_ORIGINS` to your Vercel dashboard URL when `SENTINEL_API_KEY` is enabled (see DEPLOY.md)
