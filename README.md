@@ -12,15 +12,17 @@
 <p align="center">
   <a href="https://www.youtube.com/watch?v=YOUR_VIDEO_ID"><strong>▶ Watch the 90-second demo</strong></a>
   &nbsp;·&nbsp;
-  <a href="https://YOUR_DASHBOARD.vercel.app">Live dashboard</a>
+  <a href="https://iagent-autopilot.vercel.app">Live dashboard</a>
   &nbsp;·&nbsp;
-  <a href="https://YOUR_API.onrender.com/health">Live API</a>
+  <a href="https://iagent-autopilot.onrender.com/health">Live API</a>
 </p>
 
 <p align="center">
-  <img src="docs/assets/dashboard-decision-card.png" alt="Decision card — event → proposal → risk verdict → execution → audit" width="720" />
+  <a href="https://iagent-autopilot.vercel.app">
+    <img src="docs/assets/dashboard-overview.png" alt="iAgent Autopilot workbench — agent fleet, strategy editor, demo controls, decision pipeline" width="720" />
+  </a>
   <br />
-  <em>One decision, fully explained: market event → Analyst proposal → Risk verdict → on-chain execution → Auditor summary.</em>
+  <em>Operator workbench: set strategy in plain English, run demo scenarios, watch the five-agent pipeline live.</em>
 </p>
 
 ![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)
@@ -103,11 +105,7 @@ For a deliberate live testnet proof, enable `DEMO_REAL_TX=true`: the Executor su
 
 The pairing that proves the thesis: **Risk rejects bad judgment** *and* **Executor delivers real on-chain execution** when approved.
 
-**[▶ 90-second walkthrough (YouTube)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)**
-
-<p align="center">
-  <img src="docs/assets/dashboard-overview.png" alt="Dashboard — agent fleet, decision timeline, kill switch, demo controls" width="720" />
-</p>
+**[▶ 90-second walkthrough (YouTube)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)** · **[Live dashboard](https://iagent-autopilot.vercel.app)**
 
 ---
 
@@ -122,8 +120,8 @@ The pairing that proves the thesis: **Risk rejects bad judgment** *and* **Execut
 ### Run
 
 ```bash
-git clone https://github.com/YOUR_ORG/iagent-sentinel.git
-cd iagent-sentinel
+git clone https://github.com/demiladepy/iagent-autopilot.git
+cd iagent-autopilot
 
 # API
 cd runtime
@@ -145,8 +143,8 @@ Open [http://localhost:3000](http://localhost:3000) · API docs [http://localhos
 
 | Service | URL | Notes |
 |---|---|---|
-| Dashboard | `https://YOUR_DASHBOARD.vercel.app` | Operator UI |
-| API | `https://YOUR_API.onrender.com` | FastAPI + agents + WebSocket |
+| Dashboard | [iagent-autopilot.vercel.app](https://iagent-autopilot.vercel.app) | Operator UI |
+| API | [iagent-autopilot.onrender.com](https://iagent-autopilot.onrender.com) | FastAPI + agents + WebSocket |
 
 The public deploy runs **`SIMULATOR_MODE=true`** and **`DRY_RUN=true`** for judge safety — full agent pipeline, no live capital at risk. See **[DEPLOY.md](DEPLOY.md)** for Render + Vercel env vars (`CORS_ORIGINS`, `SENTINEL_API_KEY`, etc.).
 
@@ -240,7 +238,7 @@ MIT. See [LICENSE](LICENSE) if present, or MIT terms apply to this repository.
 
 ## Built by
 
-**[@YOUR_HANDLE](https://github.com/YOUR_HANDLE)** — Injective Solo AI Builder Sprint, May 2026.
+**[@demiladepy](https://github.com/demiladepy)** — Injective Solo AI Builder Sprint, May 2026.
 
 Tagging: [@injective](https://x.com/injective) · [@NinjaLabsHQ](https://x.com/NinjaLabsHQ) · [@NinjaLabsCN](https://x.com/NinjaLabsCN)
 
@@ -249,9 +247,8 @@ Tagging: [@injective](https://x.com/injective) · [@NinjaLabsHQ](https://x.com/N
 ## Submission checklist — fill before you submit
 
 - [ ] **Demo video** — replace `YOUR_VIDEO_ID` in YouTube links (≤ 90s)
-- [ ] **Live dashboard URL** — replace `YOUR_DASHBOARD.vercel.app`
-- [ ] **Live API URL** — replace `YOUR_API.onrender.com`
-- [ ] **GitHub org/repo** — replace `YOUR_ORG/iagent-sentinel` in clone command
-- [ ] **GitHub handle** — replace `YOUR_HANDLE` in Built by section
-- [ ] **Screenshots** — add `docs/assets/dashboard-decision-card.png` and `docs/assets/dashboard-overview.png` (referenced above)
-- [ ] **Render env** — set `CORS_ORIGINS` to your Vercel dashboard URL when `SENTINEL_API_KEY` is enabled (see DEPLOY.md)
+- [x] **Live dashboard** — [iagent-autopilot.vercel.app](https://iagent-autopilot.vercel.app)
+- [x] **Live API** — [iagent-autopilot.onrender.com](https://iagent-autopilot.onrender.com)
+- [x] **GitHub repo** — [github.com/demiladepy/iagent-autopilot](https://github.com/demiladepy/iagent-autopilot)
+- [x] **Screenshot** — `docs/assets/dashboard-overview.png`
+- [ ] **Render env** — set `CORS_ORIGINS=https://iagent-autopilot.vercel.app` when `SENTINEL_API_KEY` is enabled (see DEPLOY.md)
