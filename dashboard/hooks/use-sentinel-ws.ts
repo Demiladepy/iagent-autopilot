@@ -1,39 +1,14 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { apiFetch, resolveWsUrl } from "@/lib/api";
+import { resolveWsUrl } from "@/lib/api";
+import { bootstrapRuntime } from "@/lib/runtime-bootstrap";
 import { useSentinelStore } from "@/lib/sentinel-store";
-import type {
-  AuditNote,
-  DecisionChain,
-  HealthResponse,
-  MarketEvent,
-  PortfolioSnapshot,
-  WsMessage,
-} from "@/lib/types";
+import type { WsMessage } from "@/lib/types";
 
 const MAX_BACKOFF_MS = 30_000;
-
-type ApiChain = {
-  proposal_id: string;
-  event?: DecisionChain["event"];
-  proposal?: DecisionChain["proposal"];
-  verdict?: DecisionChain["verdict"];
-  execution?: DecisionChain["execution"];
-  audit?: DecisionChain["audit"];
-};
-
-type StateResponse = {
-  positions: Record<string, unknown>[];
-  balances: PortfolioSnapshot["balances"];
-  today_pnl: number;
-  kill_switch: boolean;
-  last_audit: AuditNote | null;
-  agents?: Record<string, string>;
-  simulator_mode?: boolean;
-  mcp_connected?: boolean;
-  network?: string;
-};
+const WAKE_POLL_MS = 3_000;
+const WAKE_FAIL_AFTER_MS = 60_000;
 
 export function useSentinelWebSocket() {
   const handleMessage = useSentinelStore((s) => s.handleMessage);
@@ -44,69 +19,60 @@ export function useSentinelWebSocket() {
   const hydrateChains = useSentinelStore((s) => s.hydrateChains);
   const hydrateEvents = useSentinelStore((s) => s.hydrateEvents);
   const syncAgentsFromHealth = useSentinelStore((s) => s.syncAgentsFromHealth);
+  const markDemoActivity = useSentinelStore((s) => s.markDemoActivity);
+  const setBootPhase = useSentinelStore((s) => s.setBootPhase);
+  const bootstrapRetryNonce = useSentinelStore((s) => s.bootstrapRetryNonce);
+
   const attemptRef = useRef(0);
   const wsRef = useRef<WebSocket | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wakeTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const wakeStartedRef = useRef<number>(Date.now());
 
   useEffect(() => {
     let cancelled = false;
 
-    async function bootstrap() {
+    wakeStartedRef.current = Date.now();
+    setBootPhase("waking");
+
+    async function tryBootstrap(): Promise<boolean> {
+      if (cancelled) return false;
       try {
-        const status = await apiFetch<HealthResponse>("status");
-        if (status.network) setNetwork(status.network);
-        setRuntime({
-          ok: status.ok,
-          simulator_mode: status.simulator_mode ?? true,
-          mcp_connected: status.mcp_connected ?? false,
+        await bootstrapRuntime({
+          setNetwork,
+          setRuntime,
+          setPortfolio,
+          syncAgentsFromHealth,
+          hydrateChains,
+          hydrateEvents,
+          markDemoActivity,
         });
-        syncAgentsFromHealth(status.agents ?? {});
-        setPortfolio({ kill_switch: status.kill_switch ?? false });
-
-        const [chains, state, events] = await Promise.all([
-          apiFetch<ApiChain[]>("decisions?limit=50"),
-          apiFetch<StateResponse>("state"),
-          apiFetch<MarketEvent[]>("events?limit=20"),
-        ]);
-
-        hydrateChains(
-          chains
-            .filter((c) => c.proposal)
-            .map((c) => ({
-              proposalId: c.proposal_id,
-              sortTs: c.proposal!.ts,
-              event: c.event,
-              proposal: c.proposal!,
-              verdict: c.verdict,
-              execution: c.execution,
-              audit: c.audit,
-            }))
-        );
-
-        hydrateEvents(events);
-        setPortfolio({
-          positions: state.positions ?? [],
-          balances: state.balances ?? { bank: [], subaccount: [] },
-          today_pnl: Number(state.today_pnl ?? 0),
-          kill_switch: Boolean(state.kill_switch),
-          last_audit: state.last_audit,
-        });
-        if (state.network) setNetwork(state.network);
-        if (state.agents) syncAgentsFromHealth(state.agents);
-        setRuntime({
-          ok: true,
-          simulator_mode: state.simulator_mode ?? true,
-          mcp_connected: state.mcp_connected ?? false,
-        });
+        setBootPhase("ready");
+        return true;
       } catch {
         setRuntime({ ok: false });
+        const elapsed = Date.now() - wakeStartedRef.current;
+        if (elapsed >= WAKE_FAIL_AFTER_MS) {
+          setBootPhase("failed");
+        } else {
+          setBootPhase("waking");
+        }
+        return false;
       }
     }
 
-    void bootstrap();
+    void tryBootstrap();
+
+    wakeTimerRef.current = setInterval(() => {
+      const phase = useSentinelStore.getState().bootPhase;
+      if (phase === "ready" || phase === "failed") return;
+      void tryBootstrap();
+    }, WAKE_POLL_MS);
 
     async function connect() {
       if (cancelled) return;
+      if (useSentinelStore.getState().bootPhase !== "ready") return;
+
       const url = await resolveWsUrl();
       if (!url) return;
 
@@ -139,18 +105,31 @@ export function useSentinelWebSocket() {
       ws.onerror = () => ws.close();
     }
 
-    void connect();
+    const unsub = useSentinelStore.subscribe((state, prev) => {
+      if (state.bootPhase === "ready" && prev.bootPhase !== "ready") {
+        void connect();
+      }
+    });
+
+    if (useSentinelStore.getState().bootPhase === "ready") {
+      void connect();
+    }
 
     return () => {
       cancelled = true;
+      unsub();
       if (timerRef.current) clearTimeout(timerRef.current);
+      if (wakeTimerRef.current) clearInterval(wakeTimerRef.current);
       wsRef.current?.close();
       setConnected(false);
     };
   }, [
+    bootstrapRetryNonce,
     handleMessage,
     hydrateChains,
     hydrateEvents,
+    markDemoActivity,
+    setBootPhase,
     setConnected,
     setNetwork,
     setPortfolio,

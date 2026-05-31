@@ -65,8 +65,13 @@ export function buildDecisionChains(
     .sort((a, b) => new Date(b.sortTs).getTime() - new Date(a.sortTs).getTime());
 }
 
+export type BootPhase = "waking" | "ready" | "failed";
+
 type SentinelState = {
   connected: boolean;
+  bootPhase: BootPhase;
+  bootstrapRetryNonce: number;
+  hasDemoActivity: boolean;
   network: string;
   runtime: RuntimeMeta;
   portfolio: PortfolioSnapshot;
@@ -80,6 +85,9 @@ type SentinelState = {
   recentProposalIds: string[];
   auditStream: AuditStreamState | null;
   setConnected: (v: boolean) => void;
+  setBootPhase: (p: BootPhase) => void;
+  requestBootstrapRetry: () => void;
+  markDemoActivity: () => void;
   setNetwork: (n: string) => void;
   setRuntime: (r: Partial<RuntimeMeta>) => void;
   setKillSwitch: (v: boolean) => void;
@@ -93,6 +101,9 @@ type SentinelState = {
 
 export const useSentinelStore = create<SentinelState>((set, get) => ({
   connected: false,
+  bootPhase: "waking",
+  bootstrapRetryNonce: 0,
+  hasDemoActivity: false,
   network: "testnet",
   runtime: { ok: false, simulator_mode: true, mcp_connected: false },
   portfolio: defaultPortfolio(),
@@ -107,6 +118,14 @@ export const useSentinelStore = create<SentinelState>((set, get) => ({
   auditStream: null,
 
   setConnected: (v) => set({ connected: v }),
+  setBootPhase: (p) => set({ bootPhase: p }),
+  requestBootstrapRetry: () =>
+    set((s) => ({
+      bootstrapRetryNonce: s.bootstrapRetryNonce + 1,
+      bootPhase: "waking",
+      runtime: { ...s.runtime, ok: false },
+    })),
+  markDemoActivity: () => set({ hasDemoActivity: true }),
   setNetwork: (n) => set({ network: n }),
   setRuntime: (r) => set((s) => ({ runtime: { ...s.runtime, ...r } })),
   setKillSwitch: (v) =>
@@ -151,7 +170,15 @@ export const useSentinelStore = create<SentinelState>((set, get) => ({
         if (c.audit) audits[c.execution.id] = c.audit;
       }
     }
-    set({ events, proposals, verdicts, executions, audits, recentProposalIds });
+    set({
+      events,
+      proposals,
+      verdicts,
+      executions,
+      audits,
+      recentProposalIds,
+      hasDemoActivity: recentProposalIds.length > 0 ? true : get().hasDemoActivity,
+    });
   },
 
   handleMessage: (msg) => {
@@ -266,6 +293,7 @@ export const useSentinelStore = create<SentinelState>((set, get) => ({
           proposals: { ...s.proposals, [p.id]: p },
           recentProposalIds,
           agents,
+          hasDemoActivity: true,
         };
       });
       return;

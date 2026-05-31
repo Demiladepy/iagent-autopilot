@@ -5,6 +5,8 @@ import { DecisionDisclosure, FeedScrollArea, SectionLabel } from "@/components/s
 import { buildDecisionChains, useSentinelStore } from "@/lib/sentinel-store";
 
 export function DecisionFeed() {
+  const bootPhase = useSentinelStore((s) => s.bootPhase);
+  const hasDemoActivity = useSentinelStore((s) => s.hasDemoActivity);
   const events = useSentinelStore((s) => s.events);
   const proposals = useSentinelStore((s) => s.proposals);
   const verdicts = useSentinelStore((s) => s.verdicts);
@@ -42,6 +44,8 @@ export function DecisionFeed() {
     return () => clearTimeout(t);
   }, [chains]);
 
+  const showJudgeHint = bootPhase === "ready" && !hasDemoActivity && chains.length === 0;
+
   return (
     <section className="flex min-h-0 flex-1 flex-col">
       <div className="mb-4 flex items-end justify-between gap-4">
@@ -52,9 +56,17 @@ export function DecisionFeed() {
         <div className="space-y-4 pb-8" role="feed" aria-label="Decision timeline">
           {chains.length === 0 && (
             <div className="workbench-card rounded-2xl border-dashed px-6 py-16 text-center">
-              <p className="text-sm text-muted-foreground">
-                No decisions yet. Run a demo scenario to watch the pipeline live.
-              </p>
+              {showJudgeHint ? (
+                <p className="mx-auto max-w-md text-sm leading-relaxed text-emerald-200/85">
+                  Click{" "}
+                  <span className="font-medium text-emerald-300">Run: Funding Reversion</span> to
+                  watch five AI agents propose, risk-check, execute, and audit a trade — live.
+                </p>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  No decisions yet. Run a demo scenario to watch the pipeline live.
+                </p>
+              )}
             </div>
           )}
           {chains.map((chain, i) => (

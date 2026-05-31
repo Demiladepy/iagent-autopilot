@@ -9,7 +9,7 @@ import { KillSwitch } from "../components/KillSwitch";
 import { OfflineBanner } from "../components/OfflineBanner";
 import { PositionPanel } from "../components/PositionPanel";
 import { StrategyEditor } from "../components/StrategyEditor";
-import { WorkbenchHeader } from "@/components/sentinel";
+import { DemoModeTrustBadge, WorkbenchHeader } from "@/components/sentinel";
 import { useSentinelWebSocket } from "@/hooks/use-sentinel-ws";
 
 export default function DashboardPage() {
@@ -39,6 +39,7 @@ export default function DashboardPage() {
           </aside>
         </div>
       </main>
+      <DemoModeTrustBadge />
     </div>
   );
 }

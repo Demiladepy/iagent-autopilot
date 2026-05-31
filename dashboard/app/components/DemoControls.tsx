@@ -28,7 +28,11 @@ const SCENARIOS = [
 
 export function DemoControls() {
   const simulatorMode = useSentinelStore((s) => s.runtime.simulator_mode);
+  const bootPhase = useSentinelStore((s) => s.bootPhase);
+  const hasDemoActivity = useSentinelStore((s) => s.hasDemoActivity);
+  const markDemoActivity = useSentinelStore((s) => s.markDemoActivity);
   const setRuntime = useSentinelStore((s) => s.setRuntime);
+  const showGuide = bootPhase === "ready" && !hasDemoActivity;
   const { data: status } = useSWR<{ simulator_mode?: boolean }>("/api/proxy/status", fetcher, {
     refreshInterval: 10000,
   });
@@ -56,6 +60,7 @@ export function DemoControls() {
     try {
       const res = await fetch(`/api/proxy/sim/run/${id}`, { method: "POST" });
       if (!res.ok) throw new Error(await res.text());
+      markDemoActivity();
       toast.success(`Scenario started: ${id}`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Scenario failed");
@@ -120,6 +125,11 @@ export function DemoControls() {
 
   return (
     <PanelCard title="Co-pilot · Demo scenarios" contentClassName="space-y-3">
+      {bootPhase === "waking" && (
+        <p className="rounded-md border border-emerald-500/20 bg-emerald-950/25 px-2 py-1.5 text-xs text-emerald-200/90">
+          Engine waking — demo buttons unlock when the API is ready.
+        </p>
+      )}
       {!simOn && (
         <p className="mb-3 rounded-md border border-amber-500/30 bg-amber-950/30 px-2 py-1.5 text-xs text-amber-200">
           Simulator off — set SIMULATOR_MODE=true in runtime/.env
@@ -130,9 +140,13 @@ export function DemoControls() {
           <Button
             key={s.id}
             variant="outline"
-            className="h-10 w-full justify-start gap-2 border-white/10 hover:border-emerald-500/40 hover:bg-emerald-500/10"
+            className={
+              s.id === "funding_reversion" && showGuide
+                ? "demo-guide-pulse h-10 w-full justify-start gap-2 border-emerald-500/50 bg-emerald-500/10 hover:border-emerald-500/60 hover:bg-emerald-500/15"
+                : "h-10 w-full justify-start gap-2 border-white/10 hover:border-emerald-500/40 hover:bg-emerald-500/10"
+            }
             onClick={() => runScenario(s.id)}
-            disabled={loading !== null || !simOn}
+            disabled={loading !== null || !simOn || bootPhase !== "ready"}
           >
             <Play className="h-3.5 w-3.5 text-emerald-500" />
             Run: {s.label}
@@ -142,7 +156,7 @@ export function DemoControls() {
         <Button
           className="h-10 w-full justify-start gap-2 bg-emerald-500/15 text-emerald-200 ring-1 ring-emerald-500/25 hover:bg-emerald-500/25"
           onClick={runRealOnChainDemo}
-          disabled={loading !== null}
+          disabled={loading !== null || bootPhase !== "ready"}
         >
           <Link2 className="h-3.5 w-3.5 text-emerald-300" />
           Run: Real On-Chain Demo

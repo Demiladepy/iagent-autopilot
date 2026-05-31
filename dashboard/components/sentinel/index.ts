@@ -4,6 +4,7 @@
  */
 
 export { ConnectionAlert } from "./ConnectionAlert";
+export { DemoModeTrustBadge } from "./DemoModeTrustBadge";
 export { ConfidenceMeter } from "./ConfidenceMeter";
 export { AgentStatusIndicator } from "./AgentStatusIndicator";
 export { SectionLabel } from "./SectionLabel";
