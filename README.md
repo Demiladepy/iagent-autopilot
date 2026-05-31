@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://www.youtube.com/watch?v=YOUR_VIDEO_ID"><strong>▶ Watch the 90-second demo</strong></a>
+  <a href="https://youtu.be/4EFBRQVeDjw"><strong>▶ Watch the 90-second demo</strong></a>
   &nbsp;·&nbsp;
   <a href="https://iagent-autopilot.vercel.app">Live dashboard</a>
   &nbsp;·&nbsp;
@@ -113,7 +113,7 @@ For a deliberate live testnet proof, enable `DEMO_REAL_TX=true`: the Executor su
 
 The pairing that proves the thesis: **Risk rejects bad judgment** *and* **Executor delivers real on-chain execution** when approved.
 
-**[▶ 90-second walkthrough (YouTube)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)** · **[Live dashboard](https://iagent-autopilot.vercel.app)**
+**[▶ 90-second walkthrough (YouTube)](https://youtu.be/4EFBRQVeDjw)** · **[Live dashboard](https://iagent-autopilot.vercel.app)**
 
 ---
 
@@ -254,7 +254,7 @@ Tagging: [@injective](https://x.com/injective) · [@NinjaLabsHQ](https://x.com/N
 
 ## Submission checklist — fill before you submit
 
-- [ ] **Demo video** — replace `YOUR_VIDEO_ID` in YouTube links (≤ 90s)
+- [x] **Demo video** — [youtu.be/4EFBRQVeDjw](https://youtu.be/4EFBRQVeDjw)
 - [x] **Live dashboard** — [iagent-autopilot.vercel.app](https://iagent-autopilot.vercel.app)
 - [x] **Live API** — [iagent-autopilot.onrender.com](https://iagent-autopilot.onrender.com)
 - [x] **GitHub repo** — [github.com/demiladepy/iagent-autopilot](https://github.com/demiladepy/iagent-autopilot)
