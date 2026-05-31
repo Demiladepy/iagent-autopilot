@@ -47,15 +47,19 @@ export function DecisionFeed() {
   const showJudgeHint = bootPhase === "ready" && !hasDemoActivity && chains.length === 0;
 
   return (
-    <section className="flex min-h-0 flex-1 flex-col">
-      <div className="mb-4 flex items-end justify-between gap-4">
-        <SectionLabel index="02">Decision pipeline</SectionLabel>
-        <span className="shrink-0 font-mono text-[10px] text-emerald-500/80">{chains.length} chains</span>
+    <section className="workbench-decision-section flex min-h-0 flex-1 flex-col">
+      <div className="mb-5 flex items-end justify-between gap-4 px-1">
+        <SectionLabel index="02" className="workbench-section-label--primary">
+          Decision pipeline
+        </SectionLabel>
+        <span className="shrink-0 font-mono text-[10px] text-neutral-500">
+          {chains.length} chains
+        </span>
       </div>
-      <FeedScrollArea className="h-[calc(100vh-300px)] min-h-[360px]">
-        <div className="space-y-4 pb-8" role="feed" aria-label="Decision timeline">
+      <FeedScrollArea className="workbench-decision-feed h-[calc(100vh-280px)] min-h-[400px] xl:min-h-[440px]">
+        <div className="space-y-5 p-1 pb-10" role="feed" aria-label="Decision timeline">
           {chains.length === 0 && (
-            <div className="workbench-card rounded-2xl border-dashed px-6 py-16 text-center">
+            <div className="workbench-card workbench-decision-empty rounded-2xl border-dashed text-center">
               {showJudgeHint ? (
                 <p className="mx-auto max-w-md text-sm leading-relaxed text-emerald-200/85">
                   Click{" "}

@@ -23,11 +23,11 @@ export function AgentGrid() {
   const wsAgents = useSentinelStore((s) => s.agents);
 
   return (
-    <section>
-      <SectionLabel index="01" className="mb-4">
+    <section className="workbench-agent-fleet">
+      <SectionLabel index="01" className="workbench-section-label--secondary mb-5">
         Agent fleet
       </SectionLabel>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="workbench-agent-fleet-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
         {ORDER.map((name) => {
           const meta = AGENT_META[name];
           const Icon = meta.icon;
@@ -41,21 +41,28 @@ export function AgentGrid() {
             <div
               key={name}
               className={cn(
-                "workbench-card rounded-2xl p-4 transition-all",
-                running && "border-emerald-500/25"
+                "workbench-card workbench-agent-card rounded-2xl transition-all",
+                running && "workbench-agent-card--active"
               )}
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="font-mono text-[10px] text-neutral-600">{meta.num}</span>
-                  <Icon className="h-4 w-4 text-emerald-400" />
-                  <span className="text-sm font-semibold text-white">{meta.label}</span>
+                  <span className="workbench-agent-num font-mono text-[10px]">{meta.num}</span>
+                  <Icon className="workbench-agent-icon h-4 w-4 shrink-0" />
+                  <span className="workbench-agent-label text-sm font-semibold">{meta.label}</span>
                 </div>
-                <AgentStatusIndicator status={status} />
+                <AgentStatusIndicator
+                  status={status}
+                  className={running ? undefined : "!bg-neutral-600 shadow-none"}
+                />
               </div>
-              <p className="mt-1 text-[10px] uppercase tracking-wider text-neutral-500">{meta.role}</p>
-              <p className="mt-3 text-xs leading-snug text-neutral-300 line-clamp-2">{summary}</p>
-              <p className="mt-2 font-mono text-[10px] text-neutral-600">
+              <p className="workbench-agent-role mt-1.5 text-[10px] uppercase tracking-wider">
+                {meta.role}
+              </p>
+              <p className="workbench-agent-summary mt-3 text-xs leading-snug line-clamp-2">
+                {summary}
+              </p>
+              <p className="workbench-agent-meta mt-2.5 font-mono text-[10px]">
                 {lastTs
                   ? new Date(lastTs).toLocaleTimeString()
                   : running

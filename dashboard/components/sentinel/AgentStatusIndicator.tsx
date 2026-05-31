@@ -4,8 +4,8 @@ import { cn } from "@/lib/utils";
 
 const STATUS_STYLES: Record<string, string> = {
   running: "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]",
-  starting: "bg-amber-400",
-  idle: "bg-amber-400",
+  starting: "bg-amber-500/80",
+  idle: "bg-neutral-600",
   stopped: "bg-red-500",
   error: "bg-red-500",
 };

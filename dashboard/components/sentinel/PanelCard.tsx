@@ -14,11 +14,13 @@ export function PanelCard({ title, children, className, contentClassName }: Prop
   return (
     <Card className={cn("workbench-card border-0 bg-transparent shadow-none", className)}>
       {title != null && (
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold">{title}</CardTitle>
+        <CardHeader className="px-5 pb-2 pt-5">
+          <CardTitle className="text-sm font-semibold text-neutral-200">{title}</CardTitle>
         </CardHeader>
       )}
-      <CardContent className={cn(!title && "pt-6", contentClassName)}>{children}</CardContent>
+      <CardContent className={cn("px-5 pb-5", !title && "pt-6", contentClassName)}>
+        {children}
+      </CardContent>
     </Card>
   );
 }

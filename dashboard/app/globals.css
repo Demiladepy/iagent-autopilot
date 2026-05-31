@@ -31,8 +31,179 @@ body {
 
 /* Dashboard workbench shell (ai.work-inspired) */
 .workbench-root {
+  --workbench-max: 1920px;
+  --workbench-gutter: clamp(1.25rem, 2.5vw, 3rem);
   background-color: var(--workbench-bg);
   color: #e5e5e5;
+}
+
+.workbench-main {
+  max-width: var(--workbench-max);
+  padding-left: var(--workbench-gutter);
+  padding-right: var(--workbench-gutter);
+}
+
+/* Center column is the focal lane; side rails stay narrower */
+.workbench-grid {
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .workbench-grid {
+    grid-template-columns: minmax(260px, 0.82fr) minmax(0, 2.35fr) minmax(260px, 0.88fr);
+    column-gap: clamp(2rem, 2.5vw, 3rem);
+    row-gap: 2rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .workbench-grid {
+    grid-template-columns: minmax(280px, 300px) minmax(0, 1fr) minmax(280px, 320px);
+    column-gap: 3rem;
+  }
+}
+
+.workbench-rail {
+  gap: 1.75rem;
+}
+
+.workbench-rail .workbench-card [class*="CardTitle"] {
+  color: rgb(163 163 163);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.workbench-center {
+  gap: 2.5rem;
+}
+
+/* Section labels — primary (decision) vs secondary (fleet, ticker) */
+.workbench-section-label--primary {
+  font-size: 0.6875rem;
+  letter-spacing: 0.24em;
+  color: rgb(163 163 163);
+}
+
+.workbench-section-label--primary > span:first-child {
+  color: rgb(115 115 115);
+}
+
+.workbench-section-label--secondary {
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  color: rgb(82 82 82);
+}
+
+.workbench-section-label--secondary > span:first-child {
+  color: rgb(64 64 64);
+}
+
+/* Agent fleet */
+.workbench-agent-fleet-grid {
+  gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .workbench-agent-fleet-grid {
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .workbench-agent-fleet-grid {
+    gap: 1.25rem;
+  }
+}
+
+.workbench-agent-card {
+  padding: 1.125rem 1.25rem;
+}
+
+.workbench-agent-card--active {
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(16, 185, 129, 0.12),
+    0 20px 40px -24px rgba(16, 185, 129, 0.15);
+}
+
+.workbench-agent-card:not(.workbench-agent-card--active) .workbench-agent-role {
+  color: rgb(64 64 64);
+}
+
+.workbench-agent-card:not(.workbench-agent-card--active) .workbench-agent-summary {
+  color: rgb(82 82 82);
+}
+
+.workbench-agent-card:not(.workbench-agent-card--active) .workbench-agent-meta {
+  color: rgb(64 64 64);
+}
+
+.workbench-agent-card:not(.workbench-agent-card--active) .workbench-agent-label {
+  color: rgb(163 163 163);
+}
+
+.workbench-agent-card:not(.workbench-agent-card--active) .workbench-agent-num {
+  color: rgb(64 64 64);
+}
+
+.workbench-agent-card:not(.workbench-agent-card--active) .workbench-agent-icon {
+  color: rgb(115 115 115);
+}
+
+.workbench-agent-card--active .workbench-agent-icon {
+  color: rgb(52 211 153);
+}
+
+.workbench-agent-card--active .workbench-agent-label {
+  color: rgb(255 255 255);
+}
+
+.workbench-agent-card--active .workbench-agent-summary {
+  color: rgb(212 212 212);
+}
+
+/* Decision pipeline — focal column */
+.workbench-decision-section {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0.25rem;
+  border-radius: 1.25rem;
+}
+
+.workbench-decision-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(16, 185, 129, 0.14);
+  background: linear-gradient(
+    180deg,
+    rgba(16, 185, 129, 0.04) 0%,
+    rgba(255, 255, 255, 0.01) 48%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.workbench-decision-section > * {
+  position: relative;
+  z-index: 1;
+}
+
+.workbench-decision-feed {
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.workbench-decision-empty {
+  padding: 4.5rem 2rem;
+}
+
+.workbench-capabilities .workbench-capability-chip:hover {
+  border-color: rgba(255, 255, 255, 0.14);
 }
 
 .workbench-card {

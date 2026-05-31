@@ -6,6 +6,7 @@ import { DecisionFeed } from "../components/DecisionFeed";
 import { DemoControls } from "../components/DemoControls";
 import { EventTicker } from "../components/EventTicker";
 import { KillSwitch } from "../components/KillSwitch";
+import { McpCapabilitiesPanel } from "../components/McpCapabilitiesPanel";
 import { OfflineBanner } from "../components/OfflineBanner";
 import { PositionPanel } from "../components/PositionPanel";
 import { StrategyEditor } from "../components/StrategyEditor";
@@ -19,20 +20,21 @@ export default function DashboardPage() {
     <div className="workbench-root min-h-screen">
       <OfflineBanner />
       <WorkbenchHeader />
-      <main className="mx-auto max-w-[1600px] px-4 py-6 md:px-6 md:py-8">
-        <div className="grid gap-6 lg:grid-cols-[minmax(280px,300px)_minmax(0,1fr)_minmax(280px,320px)] lg:gap-8">
-          <aside className="flex flex-col gap-5 lg:sticky lg:top-[4.5rem] lg:max-h-[calc(100vh-5.5rem)] lg:overflow-y-auto lg:self-start">
+      <main className="workbench-main mx-auto w-full py-8 md:py-10">
+        <div className="workbench-grid grid gap-8 lg:grid-cols-[minmax(260px,0.82fr)_minmax(0,2.35fr)_minmax(260px,0.88fr)]">
+          <aside className="workbench-rail flex flex-col lg:sticky lg:top-[4.5rem] lg:max-h-[calc(100vh-5.5rem)] lg:overflow-y-auto lg:self-start">
             <KillSwitch />
             <StrategyEditor />
+            <McpCapabilitiesPanel />
             <PositionPanel />
           </aside>
 
-          <div className="flex min-h-0 min-w-0 flex-col gap-6">
+          <div className="workbench-center flex min-h-0 min-w-0 flex-col">
             <AgentGrid />
             <DecisionFeed />
           </div>
 
-          <aside className="flex min-h-0 flex-col gap-5 lg:sticky lg:top-[4.5rem] lg:max-h-[calc(100vh-5.5rem)] lg:overflow-y-auto lg:self-start">
+          <aside className="workbench-rail flex min-h-0 flex-col lg:sticky lg:top-[4.5rem] lg:max-h-[calc(100vh-5.5rem)] lg:overflow-y-auto lg:self-start">
             <DemoControls />
             <AuditStream />
             <EventTicker />

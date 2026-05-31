@@ -20,7 +20,7 @@ export function WorkbenchHeader({ className }: Props) {
         className
       )}
     >
-      <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-4 px-4 py-3 md:px-6">
+      <div className="workbench-main mx-auto flex w-full flex-wrap items-center justify-between gap-4 py-3">
         <div className="flex min-w-0 items-center gap-4">
           <Link href="/" className="group flex items-center gap-3">
             <Logo size={36} className="shrink-0" />
